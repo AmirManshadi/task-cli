@@ -6,4 +6,10 @@ linter:
 
 analyzer:
   exclude:
-    - path/to/excluded/files/**
+    - .dart_tool/**
+    - build/**
+    - test/**/generated/**
+    - lib/**/generated/**
+    - bin/**/generated/**
+    - example/**/generated/**
+    - tool/**/generated/**
