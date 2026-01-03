@@ -1,52 +1,46 @@
 import 'dart:io';
 
-import 'package:task_cli/parse.dart';
-import 'package:task_cli/commands/add.dart';
-import 'package:task_cli/commands/delete.dart';
-import 'package:task_cli/commands/list.dart';
+import 'package:task_cli/class/manager.dart';
+import 'package:task_cli/helpers/parse.dart';
 import 'package:task_cli/commands/mark.dart';
-import 'package:task_cli/commands/update.dart';
-import 'package:task_cli/store.dart';
+import 'package:task_cli/class/store.dart';
 import 'package:task_cli/types.dart';
 import 'package:path/path.dart' show absolute;
 
+final filePath = absolute('data.json');
+
 void main(Args args) async {
   try {
-    final dataFilePath = absolute('data.json');
-    print(dataFilePath);
+    final (command, params) = parse(args);
 
-    if (!File(dataFilePath).existsSync()) {
-      File(dataFilePath).writeAsStringSync('[]');
+    if (!File(filePath).existsSync()) {
+      File(filePath).writeAsStringSync('[]');
     }
 
-    final stringData = File(dataFilePath).readAsStringSync();
-    print(stringData);
-
-    print("-----------------------");
-
-    final data = Store(stringData).jsonData;
-    print(data);
-
-    final (command, params) = parse(args);
-    print(command);
-    print(params);
+    final jsonData = File(filePath).readAsStringSync();
+    final store = Store.fromJson(jsonData);
+    final app = Manager(store.tasks);
 
     switch (command) {
       case Command.add:
-        add(params);
+        app.add(params);
       case Command.delete:
-        delete(params);
+        app.delete(params);
       case Command.list:
-        list(params);
+        app.list(params);
       case Command.markInProgress:
         mark(Status.inProgress, params);
       case Command.markDone:
         mark(Status.done, params);
       case Command.update:
-        update(params);
+        app.update(params);
       case Command.unknown:
         throw 'Unknown command';
     }
+
+    final updatedTasks = app.tasks;
+    final output = Store.fromData(updatedTasks).json;
+    File(filePath).writeAsStringSync(output);
   } catch (e) {
     print('Error: $e');
   }

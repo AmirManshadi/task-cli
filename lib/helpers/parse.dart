@@ -1,7 +1,7 @@
 import 'package:task_cli/types.dart';
 
 (Command, Args) parse(Args args) {
-  if (args.isEmpty) throw 'Empty args list';
+  if (args.isEmpty) throw 'No command provided';
 
   final [commandToken, ...params] = args;
 
@@ -10,7 +10,7 @@ import 'package:task_cli/types.dart';
     orElse: () => Command.unknown,
   );
 
-  if (command == Command.unknown) throw 'Unknown command';
+  if (command == Command.unknown) throw 'Unknown command: $commandToken';
 
   return (command, params);
 }

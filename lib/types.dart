@@ -15,7 +15,7 @@ enum Command {
 
 enum Status {
   todo("todo"),
-  inProgress("inProgress"),
+  inProgress("in-progress"),
   done("done");
 
   final String value;
