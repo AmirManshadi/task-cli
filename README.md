@@ -38,3 +38,5 @@ Errors are printed as `Error: ...` and use 1-based IDs; invalid indices throw.
 - Entrypoint and dispatch live in [bin/task_cli.dart](bin/task_cli.dart).
 - Core types and logic live in [lib/class](lib/class) and [lib/helpers/parse.dart](lib/helpers/parse.dart).
 - Format and lint: `dart format .` then `dart analyze`.
+
+Created for [roadmap.sh](https://roadmap.sh/projects/task-tracker)
