@@ -9,35 +9,40 @@ class Manager {
   List<Task> get tasks => List<Task>.from(_tasks);
 
   void add(Args args) {
-    final desc = args.firstOrNull;
-    if (desc == null) throw "No description provided";
+    final desc = args.firstOrNull ?? (throw "No description provided");
     _tasks.add(Task(desc));
   }
 
   void delete(Args args) {
-    final index = args.firstOrNull;
-    if (index == null) throw "No id provided";
-    final parsedIndex = int.tryParse(index);
-    if (parsedIndex == null) throw 'Invalid id';
-    _tasks.removeAt(parsedIndex - 1);
+    final id = args.firstOrNull ?? (throw "No id provided");
+    final oneBasedIndex = int.tryParse(id) ?? (throw 'Invalid id');
+    _tasks.removeAt(oneBasedIndex - 1);
+  }
+
+  void _listAll() {
+    for (var index = 0; index < _tasks.length; index++) {
+      final task = _tasks[index];
+      print('${index + 1}: ${task.desc} (${task.status.value})');
+    }
+  }
+
+  void _listStatus(String status) {
+    final statusEnum = Status.values.firstWhere((s) => s.value == status);
+    for (var index = 0; index < _tasks.length; index++) {
+      final task = _tasks[index];
+      if (task.status == statusEnum) {
+        print('${index + 1}: ${task.desc}');
+      }
+    }
   }
 
   void list(Args args) {
     final status = args.firstOrNull;
 
     if (status == null) {
-      for (var i = 0; i < _tasks.length; i++) {
-        final t = _tasks[i];
-        print('${i + 1}: ${t.desc} (${t.status.value})');
-      }
+      _listAll();
     } else if (Status.values.map((s) => s.value).toList().contains(status)) {
-      final statusEnum = Status.values.firstWhere((s) => s.value == status);
-      for (var i = 0; i < _tasks.length; i++) {
-        final t = _tasks[i];
-        if (t.status == statusEnum) {
-          print('${i + 1}: ${t.desc}');
-        }
-      }
+      _listStatus(status);
     } else {
       throw "Invalid Status";
     }
@@ -47,18 +52,24 @@ class Manager {
     if (args.length < 2) throw "Not enough arguments for update";
     if (args.length > 2) throw "Too many arguments for update";
 
-    final id = args.firstOrNull;
-    final desc = args.lastOrNull;
+    final id = args.firstOrNull ?? (throw "No id provided");
+    final desc = args.lastOrNull ?? (throw "No description provided");
+    final oneBasedIndex = int.tryParse(id) ?? (throw 'Invalid id');
+    final task =
+        _tasks.elementAtOrNull(oneBasedIndex - 1) ?? (throw "Task not found");
 
-    if (id == null) throw "No id provided";
-    if (desc == null || desc.isEmpty) throw "No description provided";
-
-    final parsedIndex = int.tryParse(id) ?? (throw 'Invalid id');
-    final task = _tasks.elementAtOrNull(parsedIndex - 1);
-
-    if (task == null) throw "Task not found";
+    if (desc.isEmpty) throw "No description provided";
 
     task.desc = desc;
-    _tasks[parsedIndex - 1] = task;
+    task.updatedAt = DateTime.now();
+  }
+
+  void mark(Status status, Args args) {
+    final id = args.firstOrNull ?? (throw "No id provided");
+    final index = int.tryParse(id) ?? (throw 'Invalid id');
+    final task = _tasks.elementAtOrNull(index - 1) ?? (throw "Task not found");
+
+    task.status = status;
+    task.updatedAt = DateTime.now();
   }
 }

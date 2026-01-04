@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:task_cli/class/manager.dart';
 import 'package:task_cli/helpers/parse.dart';
-import 'package:task_cli/commands/mark.dart';
 import 'package:task_cli/class/store.dart';
 import 'package:task_cli/types.dart';
 import 'package:path/path.dart' show absolute;
@@ -29,9 +28,9 @@ void main(Args args) async {
       case Command.list:
         app.list(params);
       case Command.markInProgress:
-        mark(Status.inProgress, params);
+        app.mark(Status.inProgress, params);
       case Command.markDone:
-        mark(Status.done, params);
+        app.mark(Status.done, params);
       case Command.update:
         app.update(params);
       case Command.unknown:

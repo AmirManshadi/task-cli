@@ -1,14 +1,17 @@
 import 'package:task_cli/types.dart';
+import 'package:uuid/v4.dart';
+
+const v4 = UuidV4();
 
 class Task {
-  final int id;
+  final String id;
   String desc;
   Status status;
   final DateTime createdAt;
   DateTime updatedAt;
 
   Task(this.desc)
-    : id = DateTime.now().millisecondsSinceEpoch, // todo: use uuid
+    : id = v4.generate(),
       status = Status.todo,
       createdAt = DateTime.now(),
       updatedAt = DateTime.now();
